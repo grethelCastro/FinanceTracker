@@ -1,0 +1,47 @@
+/* Efecto hover para items del sidebar */
+.sidebar-nav .nav-link {
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.sidebar-nav .nav-link:hover {
+    transform: translateX(5px);
+}
+
+.sidebar-nav .nav-link.active {
+    font-weight: 500;
+}
+
+.sidebar-nav .nav-link.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background-color: var(--primary-color);
+    border-radius: 0 3px 3px 0;
+}
+
+/* Botón sidebar toggle animado */
+.sidebar-toggle {
+    transition: transform 0.3s ease;
+}
+
+.sidebar-toggle:hover {
+    transform: scale(1.1);
+}
+
+/* Feedback visual para tarjetas */
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+[data-bs-theme="dark"] .card:hover {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}

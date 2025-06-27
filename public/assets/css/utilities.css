@@ -1,0 +1,67 @@
+/* Utilidades de texto */
+.text-small {
+    font-size: 0.875rem;
+}
+
+.text-muted {
+    opacity: 0.7;
+}
+
+/* Utilidades de espaciado */
+.p-6 {
+    padding: 4rem;
+}
+
+.mt-6 {
+    margin-top: 4rem;
+}
+
+.mb-6 {
+    margin-bottom: 4rem;
+}
+
+/* Utilidades de tamaño */
+.w-35 {
+    width: 35%;
+}
+
+/* Utilidades de cursor */
+.cursor-pointer {
+    cursor: pointer;
+}
+
+/* Utilidades de posición */
+.position-relative {
+    position: relative;
+}
+
+/* Utilidades para sombras */
+.shadow-sm {
+    box-shadow: var(--shadow-sm);
+}
+
+.shadow {
+    box-shadow: var(--shadow);
+}
+
+.shadow-lg {
+    box-shadow: var(--shadow-lg);
+}
+
+/* Utilidades para bordes */
+.rounded-lg {
+    border-radius: var(--border-radius-lg);
+}
+
+.rounded-sm {
+    border-radius: var(--border-radius-sm);
+}
+
+.border-light {
+    border-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Utilidades para modo oscuro */
+[data-bs-theme="dark"] .border-light {
+    border-color: rgba(255, 255, 255, 0.05) !important;
+}
