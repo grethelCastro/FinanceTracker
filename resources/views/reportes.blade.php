@@ -31,7 +31,7 @@
             </div>
         </div>
     </div>
-</div>
+</div><br><br><br><br>
 
 @section('scripts')
 <script src="{{ asset('assets/js/modules/reports.js') }}"></script>

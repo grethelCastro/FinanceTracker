@@ -126,6 +126,24 @@ body {
     left: 0;
     right: 0;
     z-index: 1030;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: left var(--transition-speed) var(--transition-easing);
+}
+
+@media (min-width: 992px) {
+    .app-footer {
+        left: var(--sidebar-width);
+        width: calc(100% - var(--sidebar-width));
+    }
+}
+
+@media (max-width: 991.98px) {
+    .app-footer {
+        left: 0;
+        width: 100%;
+    }
 }
 
 /* Responsive */

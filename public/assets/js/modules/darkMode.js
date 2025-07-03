@@ -1,20 +1,22 @@
 document.addEventListener('DOMContentLoaded', function() {
     const darkModeToggle = document.querySelector('.dark-mode-toggle');
-    const darkTheme = document.getElementById('dark-theme');
     const darkModeIcon = document.getElementById('darkModeIcon');
-    const storage = JSON.parse(localStorage.getItem('financeTrackerData')) || { userSettings: {} };
     
-    // Inicializar tema sin parpadeo
-    if (storage.userSettings.darkMode) {
+    // Cargar preferencias
+    const storage = JSON.parse(localStorage.getItem('financeTrackerData')) || { userSettings: {} };
+    const savedTheme = storage.userSettings.darkMode || false;
+    
+    // Aplicar tema al cargar
+    if (savedTheme) {
         enableDarkMode();
     } else {
         updateIcon(false);
     }
     
-    // Manejar el botón de toggle
+    // Manejar el toggle
     if (darkModeToggle) {
         darkModeToggle.addEventListener('click', function() {
-            const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
+            const isDark = document.body.classList.contains('dark-mode');
             isDark ? disableDarkMode() : enableDarkMode();
             
             // Guardar preferencia
@@ -23,15 +25,14 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
+    // Funciones de ayuda
     function enableDarkMode() {
-        document.documentElement.setAttribute('data-bs-theme', 'dark');
-        if (darkTheme) darkTheme.disabled = false;
+        document.body.classList.add('dark-mode');
         updateIcon(true);
     }
     
     function disableDarkMode() {
-        document.documentElement.setAttribute('data-bs-theme', 'light');
-        if (darkTheme) darkTheme.disabled = true;
+        document.body.classList.remove('dark-mode');
         updateIcon(false);
     }
     

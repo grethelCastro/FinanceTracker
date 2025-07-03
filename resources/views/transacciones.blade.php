@@ -13,9 +13,14 @@
     <div class="row">
         <div class="col-md-4">
             @include('components.transactions.transaction-form')
+            <br>
+            <br>
+            <br>
         </div>
         <div class="col-md-8">
             @include('components.transactions.transaction-list')
+            <br>
+            <br>
         </div>
     </div>
 </div>

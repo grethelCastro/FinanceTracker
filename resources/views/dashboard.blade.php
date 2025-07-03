@@ -50,7 +50,7 @@
                 @include('components.dashboard.recent-transactions')
             </div>
         </div>
-    </div>
+    </div> <br><br><br><br>
 
     @section('scripts')
         <script src="{{ asset('assets/js/modules/transactions.js') }}"></script>
