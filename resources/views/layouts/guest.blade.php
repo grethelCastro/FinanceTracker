@@ -11,12 +11,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 
     <!-- CSS Personalizado -->
-    <link rel="stylesheet" href="{{ asset('assets/css/variables.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/layout.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/components.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/utilities.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/dark-theme.css') }}" id="dark-theme" disabled>
-    <link rel="stylesheet" href="{{ asset('assets/css/transitions.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/utilities.css') }}">>
     <link rel="stylesheet" href="{{ asset('assets/css/form.css') }}"> <!-- Nuevo archivo CSS para formularios -->
 
     @yield('styles')
@@ -33,8 +28,8 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ asset('assets/js/core/pageTransitions.js') }}"></script>
-        <!-- JavaScript Modules -->
+    <!-- JavaScript Modules -->
 
-    @yield('scripts')
+
 </body>
 </html>

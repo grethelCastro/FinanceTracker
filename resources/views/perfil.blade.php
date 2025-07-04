@@ -20,11 +20,11 @@
                     <form id="profileForm">
                         <div class="mb-3">
                             <label for="name" class="form-label">Nombre</label>
-                            <input type="text" class="form-control" id="name" value="Usuario Demo">
+                            <input type="text" class="form-control" id="name" name="name" placeholder="Ingrese su nombre" required>
                         </div>
                         <div class="mb-3">
                             <label for="email" class="form-label">Correo Electrónico</label>
-                            <input type="email" class="form-control" id="email" value="usuario@demo.com">
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Ingrese su correo electrónico" required>
                         </div>
                         <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                     </form>

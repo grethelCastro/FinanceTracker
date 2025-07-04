@@ -36,15 +36,15 @@ class TransactionsController extends Controller
      * @return \Illuminate\View\View
      */
     public function create()
-    {
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
+{
+    /** @var \App\Models\User $user */
+    $user = Auth::user();
 
-        $categories = $user->categories;
-        $accounts = $user->accounts;
+    $categories = $user->categories;
+    $accounts = $user->accounts;
 
-        return view('transactions.create', compact('categories', 'accounts'));
-    }
+    return view('transactions.create', compact('categories', 'accounts'));
+}
 
     /**
      * Guardar una nueva transacción en la base de datos.

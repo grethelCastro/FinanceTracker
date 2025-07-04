@@ -24,13 +24,13 @@ Route::middleware(['auth', EnsureUserHasSettings::class])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     // Transactions
-    Route::resource('transacciones', TransactionsController::class)->only(['index', 'create', 'store', 'update', 'destroy'])->names([
-        'index' => 'transacciones.index',   // ✅ Cambiado aquí
-        'create' => 'transacciones.create',
-        'store' => 'transacciones.store',
-        'update' => 'transacciones.update',
-        'destroy' => 'transacciones.destroy',
-    ]);
+Route::resource('transacciones', TransactionsController::class)->only(['index', 'create', 'store', 'update', 'destroy'])->names([
+    'index' => 'transacciones.index',
+    'create' => 'transacciones.create',
+    'store' => 'transacciones.store',
+    'update' => 'transacciones.update',
+    'destroy' => 'transacciones.destroy',
+]);
 
     // Reports
     Route::get('/reportes', [ReportsController::class, 'index'])->name('reportes.index');
