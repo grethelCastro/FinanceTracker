@@ -19,7 +19,7 @@
     top: 0;
     bottom: 0;
     width: 3px;
-    background-color: var(--primary-color);
+    background-color: var(--primary-color); /* Color primario oscuro */
     border-radius: 0 3px 3px 0;
 }
 
@@ -38,18 +38,15 @@
     border: none;
     border-radius: 1rem;
     overflow: hidden;
+    background-color: var(--light-gray); /* Fondo oscuro */
+    box-shadow: var(--shadow-sm); /* Sombra oscura */
 }
 
 .card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-}
-
-[data-bs-theme="dark"] .card:hover {
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--shadow-lg); /* Sombra más oscura al pasar el ratón */
 }
 
 .card-body {
     padding: 2rem;
 }
-
