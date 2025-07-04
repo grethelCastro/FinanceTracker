@@ -3,31 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>FinanceTracker - @yield('title')</title>
-    
-    <!-- Bootstrap 5.3 CDN -->
+
+    <!-- Bootstrap 5.3 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- CSS personalizado -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
+    <!-- CSS Personalizado -->
     <link rel="stylesheet" href="{{ asset('assets/css/variables.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/layout.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/components.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/utilities.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/dark-theme.css') }}" id="dark-theme" disabled>
+    <link rel="stylesheet" href="{{ asset('assets/css/transitions.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/form.css') }}"> <!-- Nuevo archivo CSS para formularios -->
+
+    @yield('styles')
 </head>
-<body class="guest-layout">
-    <div class="guest-container">
-        @yield('content')
+<body class="bg-light d-flex align-items-center justify-content-center min-vh-100">
+    <div class="container-fluid px-3">
+        <div class="row justify-content-center align-items-center min-vh-100">
+            <div class="col-md-6 col-lg-4">
+                @yield('content')
+            </div>
+        </div>
     </div>
 
-    <!-- Bootstrap JS Bundle with Popper -->
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- JavaScript Core -->
-    <script src="{{ asset('assets/js/core/api.js') }}"></script>
-    <script src="{{ asset('assets/js/core/storage.js') }}"></script>
-    
-    <!-- JavaScript Modules -->
-    <script src="{{ asset('assets/js/modules/darkMode.js') }}"></script>
+    <script src="{{ asset('assets/js/core/pageTransitions.js') }}"></script>
+        <!-- JavaScript Modules -->
+
+    @yield('scripts')
 </body>
 </html>

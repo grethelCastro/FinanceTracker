@@ -1,4 +1,4 @@
-/* Efecto hover para items del sidebar */
+/* === Sidebar Navigation === */
 .sidebar-nav .nav-link {
     transition: all 0.2s ease;
     position: relative;
@@ -23,7 +23,7 @@
     border-radius: 0 3px 3px 0;
 }
 
-/* Botón sidebar toggle animado */
+/* === Sidebar Toggle Button === */
 .sidebar-toggle {
     transition: transform 0.3s ease;
 }
@@ -32,9 +32,12 @@
     transform: scale(1.1);
 }
 
-/* Feedback visual para tarjetas */
+/* === Feedback Visual para Tarjetas === */
 .card {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+    border-radius: 1rem;
+    overflow: hidden;
 }
 
 .card:hover {
@@ -45,3 +48,8 @@
 [data-bs-theme="dark"] .card:hover {
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
 }
+
+.card-body {
+    padding: 2rem;
+}
+

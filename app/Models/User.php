@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+/**
+ * @method bool hasSettings()
+ */
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
@@ -50,5 +53,15 @@ class User extends Authenticatable
     public function budgets()
     {
         return $this->hasMany(Budget::class);
+    }
+
+    /**
+     * Verifica si el usuario tiene configuraciones mínimas completadas.
+     *
+     * @return bool
+     */
+    public function hasSettings(): bool
+    {
+        return !is_null($this->currency) && !is_null($this->date_format);
     }
 }

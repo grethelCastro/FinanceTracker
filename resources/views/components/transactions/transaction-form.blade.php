@@ -1,52 +1,58 @@
 <div class="card">
-    <div class="card-header">
-        <h5 class="card-title mb-0">{{ isset($transaction) ? 'Editar Transacción' : 'Nueva Transacción' }}</h5>
-    </div>
     <div class="card-body">
-        <form id="transactionForm">
-            <input type="hidden" id="transactionId" value="{{ $transaction->id ?? '' }}">
+        <form action="{{ route('transacciones.store') }}" method="POST">
+            @csrf
             
             <div class="mb-3">
-                <label for="transactionType" class="form-label">Tipo</label>
-                <select class="form-select" id="transactionType" required>
+                <label for="type" class="form-label">Tipo</label>
+                <select class="form-select" id="type" name="type" required>
+                    <option value="">Seleccionar tipo</option>
                     <option value="income">Ingreso</option>
                     <option value="expense">Gasto</option>
                 </select>
             </div>
-            
+
             <div class="mb-3">
-                <label for="transactionAmount" class="form-label">Monto (NIO)</label>
-                <input type="number" class="form-control" id="transactionAmount" step="0.01" min="0" required>
+                <label for="amount" class="form-label">Monto ({{ auth()->user()->currency ?? 'NIO' }})</label>
+                <input type="number" step="0.01" class="form-control" id="amount" name="amount" required>
             </div>
-            
+
             <div class="mb-3">
-                <label for="transactionCategory" class="form-label">Categoría</label>
-                <select class="form-select" id="transactionCategory" required>
-                    <option value="">Seleccione una categoría</option>
-                    <!-- Categorías se cargarán via JavaScript -->
+                <label for="category_id" class="form-label">Categoría</label>
+                <select class="form-select" id="category_id" name="category_id" required>
+                    <option value="">Seleccionar categoría</option>
+                    @foreach(auth()->user()->categories as $category)
+                        <option value="{{ $category->id }}" data-type="{{ $category->type }}">
+                            {{ $category->name }} ({{ ucfirst($category->type) }})
+                        </option>
+                    @endforeach
                 </select>
             </div>
-            
+
             <div class="mb-3">
-                <label for="transactionDate" class="form-label">Fecha</label>
-                <input type="date" class="form-control" id="transactionDate" required>
+                <label for="account_id" class="form-label">Cuenta</label>
+                <select class="form-select" id="account_id" name="account_id" required>
+                    <option value="">Seleccionar cuenta</option>
+                    @foreach(auth()->user()->accounts as $account)
+                        <option value="{{ $account->id }}">
+                            {{ $account->name }} ({{ ucfirst($account->type) }} - {{ $account->balance }} {{ auth()->user()->currency ?? 'NIO' }})
+                        </option>
+                    @endforeach
+                </select>
             </div>
-            
+
             <div class="mb-3">
-                <label for="transactionDescription" class="form-label">Descripción</label>
-                <textarea class="form-control" id="transactionDescription" rows="2"></textarea>
+                <label for="date" class="form-label">Fecha</label>
+                <input type="date" class="form-control" id="date" name="date" required 
+                       value="{{ now()->format('Y-m-d') }}">
             </div>
-            
-            <div class="d-grid gap-2">
-                <button type="submit" class="btn btn-primary">
-                    {{ isset($transaction) ? 'Actualizar' : 'Guardar' }}
-                </button>
-                @if(isset($transaction))
-                <button type="button" class="btn btn-outline-danger" id="cancelEdit">
-                    Cancelar
-                </button>
-                @endif
+
+            <div class="mb-3">
+                <label for="description" class="form-label">Descripción</label>
+                <textarea class="form-control" id="description" name="description" rows="3"></textarea>
             </div>
+
+            <button type="submit" class="btn btn-primary w-100">Guardar Transacción</button>
         </form>
     </div>
 </div>

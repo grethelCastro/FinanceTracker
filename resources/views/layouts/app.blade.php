@@ -16,7 +16,6 @@
     <link rel="stylesheet" href="{{ asset('assets/css/layout.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/components.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/utilities.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/dark-theme.css') }}" id="dark-theme" disabled>
     <link rel="stylesheet" href="{{ asset('assets/css/transitions.css') }}">
     
     @yield('styles')
