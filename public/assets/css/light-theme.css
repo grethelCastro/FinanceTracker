@@ -1,0 +1,120 @@
+/* === Modo Claro === */
+[data-bs-theme="light"] {
+    --primary-color: #007bff;
+    --primary-hover: #0056b3;
+    --primary-active: #004085;
+
+    --white: #ffffff;
+    --light-gray: #f8f9fa;
+    --medium-gray: #e9ecef;
+    --dark-gray: #343a40;
+    --black: #212529;
+
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* === Sidebar Navigation === */
+[data-bs-theme="light"] .sidebar-nav .nav-link {
+    color: var(--black); /* Letras en negro */
+}
+
+[data-bs-theme="light"] .sidebar-nav .nav-link:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: var(--primary-color);
+}
+
+[data-bs-theme="light"] .sidebar-nav .nav-link.active {
+    color: var(--primary-color);
+}
+
+[data-bs-theme="light"] .sidebar-nav .nav-link.active::before {
+    background-color: var(--primary-color);
+}
+
+/* === Sidebar Toggle Button === */
+[data-bs-theme="light"] .sidebar-toggle {
+    color: var(--black); /* Iconos en negro */
+}
+
+[data-bs-theme="light"] .sidebar-toggle:hover {
+    color: var(--primary-color);
+}
+
+/* === Feedback Visual para Tarjetas === */
+[data-bs-theme="light"] .card {
+    background-color: var(--white);
+    border: 1px solid var(--medium-gray); /* Bordes en gris medio */
+    box-shadow: var(--shadow-sm);
+}
+
+[data-bs-theme="light"] .card:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+[data-bs-theme="light"] .card-body {
+    color: var(--black); /* Letras en negro */
+}
+
+/* === Formulario === */
+[data-bs-theme="light"] .form-control {
+    background-color: var(--white);
+    color: var(--black); /* Letras en negro */
+    border-color: var(--medium-gray); /* Bordes en gris medio */
+}
+
+[data-bs-theme="light"] .form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+[data-bs-theme="light"] .form-control::placeholder {
+    color: var(--medium-gray);
+}
+
+[data-bs-theme="light"] .form-control:hover::placeholder {
+    color: var(--dark-gray);
+}
+
+/* === Botones === */
+[data-bs-theme="light"] .btn {
+    color: var(--white); /* Letras en blanco */
+    background-color: var(--primary-color); /* Fondo en azul claro */
+}
+
+[data-bs-theme="light"] .btn-primary {
+    background-color: var(--primary-color);
+}
+
+[data-bs-theme="light"] .btn-primary:hover {
+    background-color: var(--primary-hover);
+}
+
+[data-bs-theme="light"] .btn-secondary {
+    background-color: var(--medium-gray);
+}
+
+[data-bs-theme="light"] .btn-secondary:hover {
+    background-color: var(--dark-gray);
+}
+
+/* === Layout === */
+[data-bs-theme="light"] body {
+    background-color: var(--light-gray);
+    color: var(--black); /* Letras en negro */
+}
+
+[data-bs-theme="light"] .app-sidebar {
+    background-color: var(--white);
+}
+
+[data-bs-theme="light"] .app-header {
+    background-color: var(--white);
+    box-shadow: var(--shadow-sm);
+}
+
+[data-bs-theme="light"] .app-footer {
+    background-color: var(--white);
+    border-top: 1px solid var(--medium-gray); /* Bordes en gris medio */
+}

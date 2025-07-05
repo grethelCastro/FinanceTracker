@@ -1,0 +1,140 @@
+/* === Variables === */
+:root {
+    --primary-color: #4a6bff;
+    --primary-hover: #3a5bef;
+    --primary-active: #2a4bdf;
+    
+    --white: #ffffff;
+    --light-gray: #f8f9fa;
+    --medium-gray: #e9ecef;
+    --dark-gray: #343a40;
+    --black: #212529;
+    
+    --sidebar-width: 280px;
+    --header-height: 60px;
+    
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+    
+    --transition-speed: 0.3s;
+    --transition-easing: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* === Modo Oscuro === */
+[data-bs-theme="dark"] {
+    --primary-color: #4a6bff;
+    --primary-hover: #3a5bef;
+    --primary-active: #2a4bdf;
+    
+    --white: #ffffff;
+    --light-gray: #333333;
+    --medium-gray: #555555;
+    --dark-gray: #777777;
+    --black: #ffffff;
+    
+    --shadow-sm: 0 1px 3px rgba(255, 255, 255, 0.1);
+    --shadow: 0 4px 6px rgba(255, 255, 255, 0.1);
+    --shadow-lg: 0 10px 15px rgba(255, 255, 255, 0.1);
+}
+
+/* === Sidebar Navigation === */
+[data-bs-theme="dark"] .sidebar-nav .nav-link {
+    color: var(--medium-gray);
+}
+
+[data-bs-theme="dark"] .sidebar-nav .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--primary-color);
+}
+
+[data-bs-theme="dark"] .sidebar-nav .nav-link.active {
+    color: var(--primary-color);
+}
+
+[data-bs-theme="dark"] .sidebar-nav .nav-link.active::before {
+    background-color: var(--primary-color);
+}
+
+/* === Sidebar Toggle Button === */
+[data-bs-theme="dark"] .sidebar-toggle {
+    color: var(--medium-gray);
+}
+
+[data-bs-theme="dark"] .sidebar-toggle:hover {
+    color: var(--primary-color);
+}
+
+/* === Feedback Visual para Tarjetas === */
+[data-bs-theme="dark"] .card {
+    background-color: var(--light-gray);
+    box-shadow: var(--shadow-sm);
+}
+
+[data-bs-theme="dark"] .card:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+[data-bs-theme="dark"] .card-body {
+    color: var(--white);
+}
+
+/* === Formulario === */
+[data-bs-theme="dark"] .form-control {
+    background-color: var(--light-gray);
+    color: var(--white);
+    border-color: var(--medium-gray);
+}
+
+[data-bs-theme="dark"] .form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(74, 107, 255, 0.25);
+}
+
+[data-bs-theme="dark"] .form-control::placeholder {
+    color: var(--medium-gray);
+}
+
+[data-bs-theme="dark"] .form-control:hover::placeholder {
+    color: var(--dark-gray);
+}
+
+[data-bs-theme="dark"] .btn {
+    color: var(--white);
+}
+
+[data-bs-theme="dark"] .btn-primary {
+    background-color: var(--primary-color);
+}
+
+[data-bs-theme="dark"] .btn-primary:hover {
+    background-color: var(--primary-hover);
+}
+
+[data-bs-theme="dark"] .btn-secondary {
+    background-color: var(--medium-gray);
+}
+
+[data-bs-theme="dark"] .btn-secondary:hover {
+    background-color: var(--dark-gray);
+}
+
+/* === Layout === */
+[data-bs-theme="dark"] body {
+    background-color: var(--light-gray);
+    color: var(--white);
+}
+
+[data-bs-theme="dark"] .app-sidebar {
+    background-color: var(--light-gray);
+}
+
+[data-bs-theme="dark"] .app-header {
+    background-color: var(--light-gray);
+    box-shadow: var(--shadow-sm);
+}
+
+[data-bs-theme="dark"] .app-footer {
+    background-color: var(--light-gray);
+    border-top: 1px solid var(--medium-gray);
+}

@@ -2,39 +2,39 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Transaction extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
-        'amount',
-        'description',
-        'date',
-        'type',
-        'category_id',
-        'user_id'
+        'type', 'amount', 'category_id', 'account_id', 
+        'date', 'description', 'user_id'
     ];
 
     protected $casts = [
         'date' => 'date',
-        'amount' => 'decimal:2'
     ];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function category()
+    public function category(): BelongsTo
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class)->withDefault([
+            'name' => 'Sin categoría',
+            'type' => 'expense'
+        ]);
     }
 
-    public function account()
+    public function account(): BelongsTo
     {
-        return $this->belongsTo(Account::class);
+        return $this->belongsTo(Account::class)->withDefault([
+            'name' => 'Sin cuenta',
+            'type' => 'cash',
+            'balance' => 0
+        ]);
     }
 }

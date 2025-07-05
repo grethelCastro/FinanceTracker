@@ -8,45 +8,95 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TransactionsController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\AccountController;
 use App\Http\Middleware\EnsureUserHasSettings;
 
-// === Authentication Routes ===
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [LoginController::class, 'login']);
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "web" middleware group. Make something great!
+|
+*/
 
-Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
-Route::post('/register', [RegisterController::class, 'register']);
+// ==================== Authentication Routes ====================
+Route::controller(LoginController::class)->group(function () {
+    Route::get('/login', 'showLoginForm')->name('login');
+    Route::post('/login', 'login');
+    Route::post('/logout', 'logout')->name('logout');
+});
 
-// === Protected Routes ===
+Route::controller(RegisterController::class)->group(function () {
+    Route::get('/register', 'showRegistrationForm')->name('register');
+    Route::post('/register', 'register');
+});
+
+// ==================== Protected Routes ====================
 Route::middleware(['auth', EnsureUserHasSettings::class])->group(function () {
     // Dashboard
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     // Transactions
-Route::resource('transacciones', TransactionsController::class)->only(['index', 'create', 'store', 'update', 'destroy'])->names([
-    'index' => 'transacciones.index',
-    'create' => 'transacciones.create',
-    'store' => 'transacciones.store',
-    'update' => 'transacciones.update',
-    'destroy' => 'transacciones.destroy',
-]);
+    Route::resource('transacciones', TransactionsController::class)
+        ->except(['show'])
+        ->names([
+            'index' => 'transacciones.index',
+            'create' => 'transacciones.create',
+            'store' => 'transacciones.store',
+            'edit' => 'transacciones.edit',
+            'update' => 'transacciones.update',
+            'destroy' => 'transacciones.destroy'
+        ]);
 
     // Reports
     Route::get('/reportes', [ReportsController::class, 'index'])->name('reportes.index');
 
     // Profile
-    Route::get('/perfil', [ProfileController::class, 'profile'])->name('perfil');
-    Route::post('/perfil', [ProfileController::class, 'updateProfile'])->name('perfil.update');
+    Route::controller(ProfileController::class)->group(function () {
+        Route::get('/perfil', 'profile')->name('perfil');
+        Route::post('/perfil', 'updateProfile')->name('perfil.update');
+    });
+
+    // Categories
+    Route::controller(CategoryController::class)->group(function () {
+        Route::post('/categories', 'store')->name('categories.store');
+        Route::put('/categories/{category}', 'update')->name('categories.update');
+        Route::delete('/categories/{category}', 'destroy')->name('categories.destroy');
+    });
+
+    // Accounts
+    Route::controller(AccountController::class)->group(function () {
+        Route::post('/accounts', 'store')->name('accounts.store');
+        Route::put('/accounts/{account}', 'update')->name('accounts.update');
+        Route::delete('/accounts/{account}', 'destroy')->name('accounts.destroy');
+    });
+
+    // ==================== API Routes ====================
+    Route::prefix('api')->name('api.')->group(function () {
+        // Transactions API
+        Route::controller(TransactionsController::class)->group(function () {
+            Route::get('/transacciones', 'index')->name('transacciones.index');
+            Route::get('/transactions', 'getTransactions')->name('transactions.list');
+        });
+
+        // Categories API
+        Route::get('/categories', [CategoryController::class, 'getCategories'])
+            ->name('categories.list');
+
+        // Accounts API
+        Route::get('/accounts', [AccountController::class, 'getAccounts'])
+            ->name('accounts.list');
+
+        // Reports API
+        Route::get('/monthly-summary', [ReportsController::class, 'monthlySummary'])
+            ->name('monthly.summary');
+    });
 });
 
-// === API Routes for AJAX ===
-Route::middleware('auth')->prefix('api')->group(function () {
-    Route::get('/transacciones', [TransactionsController::class, 'index'])->name('api.transacciones.index');
-    Route::get('/transactions', [TransactionsController::class, 'getTransactions']);
-    Route::get('/categories', [TransactionsController::class, 'getCategories']);
-    Route::get('/monthly-summary', [ReportsController::class, 'monthlySummary']);
-});
 
 // === Rutas de Fallback ===
 Route::fallback(function () {

@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 
     <!-- CSS Personalizado -->
+    <link rel="stylesheet" href="{{ asset('assets/css/transitions.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/utilities.css') }}">>
     <link rel="stylesheet" href="{{ asset('assets/css/form.css') }}"> <!-- Nuevo archivo CSS para formularios -->
 
