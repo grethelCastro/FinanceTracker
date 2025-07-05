@@ -56,10 +56,13 @@ Route::middleware(['auth', EnsureUserHasSettings::class])->group(function () {
     Route::get('/reportes', [ReportsController::class, 'index'])->name('reportes.index');
 
     // Profile
-    Route::controller(ProfileController::class)->group(function () {
-        Route::get('/perfil', 'profile')->name('perfil');
-        Route::post('/perfil', 'updateProfile')->name('perfil.update');
-    });
+// Dentro del grupo de rutas protegidas
+Route::prefix('perfil')->group(function () {
+    Route::get('/', [ProfileController::class, 'profile'])->name('perfil');
+    Route::put('/', [ProfileController::class, 'updateProfile'])->name('perfil.update');
+    Route::put('/preferencias', [ProfileController::class, 'updatePreferences'])
+        ->name('perfil.preferences.update');
+});
 
     // Categories
     Route::controller(CategoryController::class)->group(function () {

@@ -16,8 +16,26 @@
                         <th class="text-end">Monto</th>
                     </tr>
                 </thead>
-                <tbody id="recentTransactions">
-                    <!-- Datos se cargarán via JavaScript -->
+                <tbody>
+                    @forelse($transactions as $transaction)
+                        <tr>
+                            <td>{{ $transaction->date->format('d/m/Y') }}</td>
+                            <td>{{ $transaction->description ?? 'Sin descripción' }}</td>
+                            <td>
+                                <span class="badge bg-{{ $transaction->category->type === 'income' ? 'success' : 'danger' }}-subtle text-{{ $transaction->category->type === 'income' ? 'success' : 'danger' }}">
+                                    {{ $transaction->category->name }}
+                                </span>
+                            </td>
+                            <td class="text-end fw-bold {{ $transaction->category->type === 'income' ? 'text-success' : 'text-danger' }}">
+                                {{ $transaction->category->type === 'income' ? '+' : '-' }} 
+                                C$ {{ number_format($transaction->amount, 2) }}
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="text-center">No hay transacciones recientes</td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
