@@ -7,9 +7,6 @@
     <div class="row mb-4">
         <div class="col-12">
             <h1>Configuración de Perfil</h1>
-            @if(session('success'))
-                <div class="alert alert-success">{{ session('success') }}</div>
-            @endif
         </div>
     </div>
 
@@ -27,44 +24,27 @@
                             <label for="name" class="form-label">Nombre</label>
                             <input type="text" class="form-control @error('name') is-invalid @enderror" 
                                    id="name" name="name" 
-                                   value="{{ old('name', auth()->user()->name) }}" 
-                                   required>
+                                   value="{{ old('name', $user->name) }}" 
+                                   required
+                                   @if($user->name_updated_at && $user->name_updated_at->diffInDays(now()) < 30) disabled @endif>
                             @error('name')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
+                            @if($user->name_updated_at && $user->name_updated_at->diffInDays(now()) < 30)
+                                <small class="text-muted">Podrás cambiar tu nombre nuevamente en {{ 30 - $user->name_updated_at->diffInDays(now()) }} días</small>
+                            @endif
                         </div>
                         <div class="mb-3">
                             <label for="email" class="form-label">Correo Electrónico</label>
-                            <input type="email" class="form-control @error('email') is-invalid @enderror" 
+                            <input type="email" class="form-control" 
                                    id="email" name="email" 
-                                   value="{{ old('email', auth()->user()->email) }}" 
-                                   required>
-                            @error('email')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                                   value="{{ $user->email }}" 
+                                   disabled>
+                            <small class="text-muted">El correo electrónico no se puede cambiar</small>
                         </div>
-                        <div class="mb-3">
-                            <label for="current_password" class="form-label">Contraseña Actual (para cambiar contraseña)</label>
-                            <input type="password" class="form-control @error('current_password') is-invalid @enderror" 
-                                   id="current_password" name="current_password">
-                            @error('current_password')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="mb-3">
-                            <label for="new_password" class="form-label">Nueva Contraseña</label>
-                            <input type="password" class="form-control @error('new_password') is-invalid @enderror" 
-                                   id="new_password" name="new_password">
-                            @error('new_password')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="mb-3">
-                            <label for="new_password_confirmation" class="form-label">Confirmar Nueva Contraseña</label>
-                            <input type="password" class="form-control" 
-                                   id="new_password_confirmation" name="new_password_confirmation">
-                        </div>
-                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                        <button type="submit" class="btn btn-primary" @if($user->name_updated_at && $user->name_updated_at->diffInDays(now()) < 30) disabled @endif>
+                            Guardar Cambios
+                        </button>
                     </form>
                 </div>
             </div>
@@ -83,9 +63,9 @@
                             <label for="currency" class="form-label">Moneda Principal</label>
                             <select class="form-select @error('currency') is-invalid @enderror" 
                                     id="currency" name="currency" required>
-                                <option value="NIO" {{ auth()->user()->currency === 'NIO' ? 'selected' : '' }}>Córdobas (NIO)</option>
-                                <option value="USD" {{ auth()->user()->currency === 'USD' ? 'selected' : '' }}>Dólares (USD)</option>
-                                <option value="EUR" {{ auth()->user()->currency === 'EUR' ? 'selected' : '' }}>Euros (EUR)</option>
+                                <option value="NIO" {{ $user->currency === 'NIO' ? 'selected' : '' }}>Córdobas (NIO)</option>
+                                <option value="USD" {{ $user->currency === 'USD' ? 'selected' : '' }}>Dólares (USD)</option>
+                                <option value="EUR" {{ $user->currency === 'EUR' ? 'selected' : '' }}>Euros (EUR)</option>
                             </select>
                             @error('currency')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -94,7 +74,7 @@
                         <div class="form-check form-switch mb-3">
                             <input class="form-check-input" type="checkbox" 
                                    id="dark_mode" name="dark_mode" 
-                                   {{ auth()->user()->dark_mode ? 'checked' : '' }}>
+                                   {{ $user->dark_mode ? 'checked' : '' }}>
                             <label class="form-check-label" for="dark_mode">Modo Oscuro</label>
                         </div>
                         <button type="submit" class="btn btn-primary">Guardar Preferencias</button>
@@ -104,4 +84,29 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Sincronizar el botón del header con el estado del modo oscuro
+    const darkModeToggle = document.querySelector('.dark-mode-toggle');
+    const darkModeCheckbox = document.getElementById('dark_mode');
+    
+    if (darkModeToggle && darkModeCheckbox) {
+        darkModeToggle.addEventListener('click', function() {
+            // Actualizar el checkbox cuando se usa el botón del header
+            darkModeCheckbox.checked = document.body.getAttribute('data-bs-theme') === 'dark';
+        });
+        
+        darkModeCheckbox.addEventListener('change', function() {
+            // Simular click en el botón del header cuando se cambia el checkbox
+            if ((this.checked && document.body.getAttribute('data-bs-theme') !== 'dark') || 
+                (!this.checked && document.body.getAttribute('data-bs-theme') === 'dark')) {
+                darkModeToggle.click();
+            }
+        });
+    }
+});
+</script>
 @endsection
