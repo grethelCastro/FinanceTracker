@@ -1,6 +1,29 @@
-/* Estructura principal */
+/* =============================================
+   LOADER & ANIMATIONS
+   ============================================= */
+.fade-out {
+    opacity: 0;
+    transition: opacity var(--transition-speed) var(--transition-easing);
+}
+
+#custom-loader {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1050;
+    background: var(--white);
+    padding: 1.25rem;
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-sm);
+}
+
+/* =============================================
+   BASE STRUCTURE
+   ============================================= */
 body {
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-family: var(--font-sans);
     background-color: var(--light-gray);
     color: var(--black);
     min-height: 100vh;
@@ -15,7 +38,7 @@ body {
 
 .main-content {
     flex: 1;
-    transition: margin-left 0.3s ease;
+    transition: margin-left var(--transition-speed) var(--transition-easing);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -28,7 +51,9 @@ body {
     padding-bottom: calc(var(--footer-height) + 1.5rem);
 }
 
-/* Header */
+/* =============================================
+   HEADER COMPONENT
+   ============================================= */
 .app-header {
     position: fixed;
     top: 0;
@@ -38,10 +63,12 @@ body {
     z-index: 1030;
     background-color: var(--white);
     box-shadow: var(--shadow-sm);
-    transition: left 0.3s ease;
+    transition: left var(--transition-speed) var(--transition-easing);
 }
 
-/* Sidebar */
+/* =============================================
+   SIDEBAR COMPONENT
+   ============================================= */
 .app-sidebar {
     width: var(--sidebar-width);
     background-color: var(--white);
@@ -60,12 +87,12 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 0.5rem 0.5rem 1rem;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .sidebar-title {
     font-size: 1.1rem;
-    font-weight: 600;
+    font-weight: var(--font-semibold);
     margin: 0;
     color: var(--black);
 }
@@ -76,7 +103,7 @@ body {
     font-size: 1.25rem;
     color: var(--dark-gray);
     opacity: 0.7;
-    transition: opacity 0.2s;
+    transition: opacity var(--transition-speed) ease;
 }
 
 .sidebar-close:hover {
@@ -100,11 +127,12 @@ body {
     border-radius: var(--border-radius-sm);
     color: var(--dark-gray);
     text-decoration: none;
-    transition: all 0.2s ease;
+    transition: var(--transition-all);
 }
 
-.nav-link:hover, .nav-link.active {
-    background-color: rgba(74, 107, 255, 0.1);
+.nav-link:hover, 
+.nav-link.active {
+    background-color: rgba(var(--primary-rgb), 0.1);
     color: var(--primary-color);
 }
 
@@ -115,10 +143,12 @@ body {
     text-align: center;
 }
 
-/* Footer */
+/* =============================================
+   FOOTER COMPONENT
+   ============================================= */
 .app-footer {
     background-color: var(--white);
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    border-top: 1px solid var(--border-color);
     padding: 1rem;
     height: var(--footer-height);
     position: fixed;
@@ -132,34 +162,21 @@ body {
     transition: left var(--transition-speed) var(--transition-easing);
 }
 
-@media (min-width: 992px) {
-    .app-footer {
-        left: var(--sidebar-width);
-        width: calc(100% - var(--sidebar-width));
-    }
-}
-
-@media (max-width: 991.98px) {
-    .app-footer {
-        left: 0;
-        width: 100%;
-    }
-}
-
-/* Responsive */
+/* =============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================= */
 @media (min-width: 992px) {
     .main-content {
         margin-left: var(--sidebar-width);
     }
     
-    .app-header {
+    .app-header,
+    .app-footer {
         left: var(--sidebar-width);
+        width: calc(100% - var(--sidebar-width));
     }
     
-    .sidebar-toggle {
-        display: none;
-    }
-    
+    .sidebar-toggle,
     .sidebar-close {
         display: none;
     }

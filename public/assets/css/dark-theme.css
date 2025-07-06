@@ -19,6 +19,7 @@
     
     --transition-speed: 0.3s;
     --transition-easing: cubic-bezier(0.4, 0, 0.2, 1);
+    
 }
 
 /* === Modo Oscuro === */
@@ -29,7 +30,7 @@
     
     --white: #ffffff;
     --light-gray: #333333;
-    --medium-gray: #555555;
+    --medium-gray: #ffffff;
     --dark-gray: #777777;
     --black: #ffffff;
     
@@ -79,45 +80,6 @@
     color: var(--white);
 }
 
-/* === Formulario === */
-[data-bs-theme="dark"] .form-control {
-    background-color: var(--light-gray);
-    color: var(--white);
-    border-color: var(--medium-gray);
-}
-
-[data-bs-theme="dark"] .form-control:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 0.2rem rgba(74, 107, 255, 0.25);
-}
-
-[data-bs-theme="dark"] .form-control::placeholder {
-    color: var(--medium-gray);
-}
-
-[data-bs-theme="dark"] .form-control:hover::placeholder {
-    color: var(--dark-gray);
-}
-
-[data-bs-theme="dark"] .btn {
-    color: var(--white);
-}
-
-[data-bs-theme="dark"] .btn-primary {
-    background-color: var(--primary-color);
-}
-
-[data-bs-theme="dark"] .btn-primary:hover {
-    background-color: var(--primary-hover);
-}
-
-[data-bs-theme="dark"] .btn-secondary {
-    background-color: var(--medium-gray);
-}
-
-[data-bs-theme="dark"] .btn-secondary:hover {
-    background-color: var(--dark-gray);
-}
 
 /* === Layout === */
 [data-bs-theme="dark"] body {

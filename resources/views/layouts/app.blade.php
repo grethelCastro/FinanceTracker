@@ -17,18 +17,13 @@
     <link rel="stylesheet" href="{{ asset('assets/css/components.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/utilities.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/transitions.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/light-theme.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/dark-theme.css') }}">
-    
+    <link rel="stylesheet" href="{{ asset('assets/css/light-theme.css') }}">
     @yield('styles')
 </head>
 <body>
-    <!-- Loader para transiciones -->
-    <div class="page-loader">
-        <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Cargando...</span>
-        </div>
-    </div>
+    <!-- Incluir el componente de transición -->
+    @include('components.transitions')
 
     <div class="app-container">
         @include('components.shared.sidebar')
@@ -40,7 +35,7 @@
                 @yield('content')
             </main>
             
-            @include('components.shared.footer')
+            
         </div>
     </div>
 
@@ -55,6 +50,8 @@
     <!-- JavaScript Modules -->
     <script src="{{ asset('assets/js/modules/darkMode.js') }}"></script>
     <script src="{{ asset('assets/js/modules/sidebar.js') }}"></script>
+
+
     <script src="{{ asset('assets/js/modules/pageTransitions.js') }}"></script>
     
     @yield('scripts')

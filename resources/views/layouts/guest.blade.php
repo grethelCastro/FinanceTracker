@@ -11,13 +11,17 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 
     <!-- CSS Personalizado -->
+    <link rel="stylesheet" href="{{ asset('assets/css/variables.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/transitions.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/utilities.css') }}">>
-    <link rel="stylesheet" href="{{ asset('assets/css/form.css') }}"> <!-- Nuevo archivo CSS para formularios -->
-
+    <link rel="stylesheet" href="{{ asset('assets/css/utilities.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/form.css') }}">
+    
     @yield('styles')
 </head>
 <body class="bg-light d-flex align-items-center justify-content-center min-vh-100">
+    <!-- Incluir el componente de transiciones -->
+    @include('components.transitions')
+
     <div class="container-fluid px-3">
         <div class="row justify-content-center align-items-center min-vh-100">
             <div class="col-md-6 col-lg-4">
@@ -28,9 +32,9 @@
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('assets/modules/darkMode.js   ') }}"></script>
     <script src="{{ asset('assets/js/core/pageTransitions.js') }}"></script>
-    <!-- JavaScript Modules -->
-
-
+    
+    @yield('scripts')
 </body>
 </html>

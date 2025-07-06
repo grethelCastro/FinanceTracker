@@ -1,78 +1,119 @@
 document.addEventListener('DOMContentLoaded', () => {
     const darkModeToggle = document.querySelector('.dark-mode-toggle');
-    const darkModeIcon = document.getElementById('darkModeIcon');
-    const darkModeCheckbox = document.getElementById('dark_mode');
+    const darkModeSwitch = document.getElementById('darkModeSwitch');
+    const htmlElement = document.documentElement;
+
+    // Configuración
+    const config = {
+        storageKey: 'theme',
+        serverEndpoint: '/perfil/preferencias'
+    };
+
+    // Función para activar el modo oscuro
+    const enableDarkMode = (savePreference = true) => {
+        htmlElement.setAttribute('data-bs-theme', 'dark');
+        darkModeSwitch.checked = true;
+        darkModeToggle.setAttribute('aria-checked', 'true');
+        
+        if (savePreference) {
+            saveThemePreference('dark');
+        }
+    };
+
+    // Función para activar el modo claro
+    const enableLightMode = (savePreference = true) => {
+        htmlElement.setAttribute('data-bs-theme', 'light');
+        darkModeSwitch.checked = false;
+        darkModeToggle.setAttribute('aria-checked', 'false');
+        
+        if (savePreference) {
+            saveThemePreference('light');
+        }
+    };
 
     // Función para cambiar el tema
-    function toggleTheme() {
-        const body = document.body;
-        const isDarkMode = body.getAttribute('data-bs-theme') === 'dark';
+    const toggleTheme = (savePreference = true) => {
+        const isDarkMode = htmlElement.getAttribute('data-bs-theme') === 'dark';
         
-        // Cambiar tema visual
+        // Animación
+        darkModeToggle.classList.add('active');
+        setTimeout(() => darkModeToggle.classList.remove('active'), 300);
+
         if (isDarkMode) {
-            body.setAttribute('data-bs-theme', 'light');
-            darkModeIcon.classList.replace('bi-moon', 'bi-brightness-high');
+            enableLightMode(savePreference);
         } else {
-            body.setAttribute('data-bs-theme', 'dark');
-            darkModeIcon.classList.replace('bi-brightness-high', 'bi-moon');
+            enableDarkMode(savePreference);
         }
+    };
 
-        // Sincronizar con el checkbox si existe
-        if (darkModeCheckbox) {
-            darkModeCheckbox.checked = !isDarkMode;
-        }
-
-        // Guardar preferencia en el servidor si está autenticado
-        if (window.Laravel && window.Laravel.userId) {
-            fetch('/perfil/preferencias', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                },
-                body: JSON.stringify({
-                    dark_mode: !isDarkMode,
-                    _method: 'PUT'
-                })
-            });
+    // Guardar preferencia
+    const saveThemePreference = (theme) => {
+        if (window.Laravel?.userId) {
+            updateServerPreference(theme === 'dark');
         } else {
-            // Guardar en localStorage para usuarios no autenticados
-            localStorage.setItem('theme', isDarkMode ? 'light' : 'dark');
+            localStorage.setItem(config.storageKey, theme);
         }
-    }
+    };
 
-    // Evento para el botón de cambio de tema
-    if (darkModeToggle) {
-        darkModeToggle.addEventListener('click', toggleTheme);
-    }
+    // Actualizar en servidor
+    const updateServerPreference = (darkModeEnabled) => {
+        fetch(config.serverEndpoint, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({
+                dark_mode: darkModeEnabled,
+                _method: 'PUT'
+            })
+        }).catch(error => {
+            console.error('Error al guardar preferencia:', error);
+        });
+    };
 
-    // Aplicar el tema guardado
-    function applySavedTheme() {
-        const savedTheme = localStorage.getItem('theme');
-        const userPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const theme = savedTheme || (userPrefersDark ? 'dark' : 'light');
-
-        document.body.setAttribute('data-bs-theme', theme);
+    // Aplicar tema guardado
+    const applySavedTheme = () => {
+        const savedTheme = localStorage.getItem(config.storageKey);
+        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
         
-        if (darkModeIcon) {
-            if (theme === 'dark') {
-                darkModeIcon.classList.add('bi-moon');
+        if (theme === 'dark') {
+            enableDarkMode(false); // No guardar preferencia al inicializar
+        } else {
+            enableLightMode(false);
+        }
+    };
+
+    // Evento para el cambio manual
+    darkModeToggle.addEventListener('click', () => {
+        toggleTheme(true);
+    });
+
+    // Evento directo para el checkbox (por si acaso)
+    darkModeSwitch.addEventListener('change', () => {
+        toggleTheme(true);
+    });
+
+    // Escuchar cambios del sistema
+    const colorSchemeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    colorSchemeMediaQuery.addEventListener('change', (e) => {
+        if (!localStorage.getItem(config.storageKey)) {
+            if (e.matches) {
+                enableDarkMode(false);
             } else {
-                darkModeIcon.classList.add('bi-brightness-high');
+                enableLightMode(false);
             }
         }
+    });
 
-        if (darkModeCheckbox) {
-            darkModeCheckbox.checked = theme === 'dark';
-        }
-    }
-
+    // Inicializar
     applySavedTheme();
 
-    // Escuchar cambios en las preferencias del sistema
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-        if (!localStorage.getItem('theme')) {
-            applySavedTheme();
-        }
-    });
-});
+    // Limpieza para SPA (opcional)
+    return () => {
+        darkModeToggle.removeEventListener('click', toggleTheme);
+        darkModeSwitch.removeEventListener('change', toggleTheme);
+        colorSchemeMediaQuery.removeEventListener('change', handleSystemThemeChange);
+    };
+});     

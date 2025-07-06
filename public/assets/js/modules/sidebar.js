@@ -3,11 +3,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const sidebar = document.querySelector('.app-sidebar');
     const sidebarClose = document.querySelector('.sidebar-close');
     
-    // Mostrar/ocultar sidebar con animación
+    // Mostrar/ocultar sidebar en móvil
     if (sidebarToggle) {
         sidebarToggle.addEventListener('click', function(e) {
             e.stopPropagation();
-            toggleSidebar();
+            sidebar.classList.toggle('show');
+            document.body.classList.toggle('sidebar-open');
         });
     }
     
@@ -30,15 +31,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Ajustar al cambiar tamaño
     window.addEventListener('resize', function() {
         if (window.innerWidth >= 992) {
-            sidebar.classList.remove('show');
-            document.body.classList.remove('sidebar-open');
+            closeSidebar();
         }
     });
-    
-    function toggleSidebar() {
-        sidebar.classList.toggle('show');
-        document.body.classList.toggle('sidebar-open');
-    }
     
     function closeSidebar() {
         sidebar.classList.remove('show');

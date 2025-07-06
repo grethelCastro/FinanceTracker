@@ -10,9 +10,14 @@
         </a>
 
         <div class="d-flex align-items-center ms-auto">
-            <button class="btn dark-mode-toggle me-2">
-                <i class="bi" id="darkModeIcon"></i>
-            </button>
+ <button class="btn dark-mode-toggle me-2 p-0" type="button" role="switch" aria-checked="false" aria-label="Cambiar tema">
+    <span class="switch-wrapper">
+        <input class="switch-check" id="darkModeSwitch" type="checkbox">
+        <label class="switch-label" for="darkModeSwitch">
+            <span class="switch-handle"></span>
+        </label>
+    </span>
+</button>
 
             <div class="dropdown">
                 <button class="btn dropdown-toggle d-flex align-items-center" type="button" id="userDropdown" data-bs-toggle="dropdown">
