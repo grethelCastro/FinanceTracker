@@ -7,6 +7,9 @@
     <title>FinanceTracker - @yield('title')</title>
     
     <!-- Bootstrap 5.3 CDN -->
+        <!-- Incluir CSS del loader primero -->
+    <link rel="stylesheet" href="{{ asset('assets/css/loader.css') }}" media="print" onload="this.media='all'"> 
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
@@ -16,14 +19,26 @@
     <link rel="stylesheet" href="{{ asset('assets/css/layout.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/components.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/utilities.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/transitions.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/dark-theme.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/light-theme.css') }}">
     @yield('styles')
+        <script>
+        // Pequeño script inicial para mostrar el loader
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!document.getElementById('custom-loader')) {
+                const loader = document.createElement('div');
+                loader.id = 'custom-loader';
+                loader.innerHTML = `@include('components.loader')`;
+                document.body.appendChild(loader);
+            }
+            document.getElementById('custom-loader').style.display = 'flex';
+            document.body.classList.add('no-scroll');
+        });
+    </script>
 </head>
 <body>
     <!-- Incluir el componente de transición -->
-    @include('components.transitions')
+    @include('components.loader')
 
     <div class="app-container">
         @include('components.shared.sidebar')
@@ -52,7 +67,7 @@
     <script src="{{ asset('assets/js/modules/sidebar.js') }}"></script>
 
 
-    <script src="{{ asset('assets/js/modules/pageTransitions.js') }}"></script>
+    <script src="{{ asset('assets/js/modules/loader.js') }}"></script>
     
     @yield('scripts')
 </body>

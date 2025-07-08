@@ -1,3 +1,4 @@
+// darkMode.js
 document.addEventListener('DOMContentLoaded', () => {
     const darkModeToggle = document.querySelector('.dark-mode-toggle');
     const darkModeSwitch = document.getElementById('darkModeSwitch');
@@ -12,8 +13,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Función para activar el modo oscuro
     const enableDarkMode = (savePreference = true) => {
         htmlElement.setAttribute('data-bs-theme', 'dark');
-        darkModeSwitch.checked = true;
-        darkModeToggle.setAttribute('aria-checked', 'true');
+        document.getElementById('dark-theme')?.removeAttribute('disabled');
+        if (darkModeSwitch) darkModeSwitch.checked = true;
+        if (darkModeToggle) darkModeToggle.setAttribute('aria-checked', 'true');
         
         if (savePreference) {
             saveThemePreference('dark');
@@ -23,8 +25,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Función para activar el modo claro
     const enableLightMode = (savePreference = true) => {
         htmlElement.setAttribute('data-bs-theme', 'light');
-        darkModeSwitch.checked = false;
-        darkModeToggle.setAttribute('aria-checked', 'false');
+        document.getElementById('dark-theme')?.setAttribute('disabled', 'true');
+        if (darkModeSwitch) darkModeSwitch.checked = false;
+        if (darkModeToggle) darkModeToggle.setAttribute('aria-checked', 'false');
         
         if (savePreference) {
             saveThemePreference('light');
@@ -35,9 +38,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const toggleTheme = (savePreference = true) => {
         const isDarkMode = htmlElement.getAttribute('data-bs-theme') === 'dark';
         
-        // Animación
-        darkModeToggle.classList.add('active');
-        setTimeout(() => darkModeToggle.classList.remove('active'), 300);
+        if (darkModeToggle) {
+            darkModeToggle.classList.add('active');
+            setTimeout(() => darkModeToggle.classList.remove('active'), 300);
+        }
 
         if (isDarkMode) {
             enableLightMode(savePreference);
@@ -74,7 +78,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Aplicar tema guardado
     const applySavedTheme = () => {
-        const savedTheme = localStorage.getItem(config.storageKey);
+        // Verificar preferencia del usuario desde la base de datos (vía meta tag)
+        const themeMeta = document.querySelector('meta[name="color-theme"]');
+        const savedTheme = themeMeta ? themeMeta.content : localStorage.getItem(config.storageKey);
         const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
         
@@ -86,34 +92,33 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Evento para el cambio manual
-    darkModeToggle.addEventListener('click', () => {
-        toggleTheme(true);
-    });
+    if (darkModeToggle) {
+        darkModeToggle.addEventListener('click', () => {
+            toggleTheme(true);
+        });
+    }
 
-    // Evento directo para el checkbox (por si acaso)
-    darkModeSwitch.addEventListener('change', () => {
-        toggleTheme(true);
-    });
+    // Evento directo para el checkbox
+    if (darkModeSwitch) {
+        darkModeSwitch.addEventListener('change', () => {
+            toggleTheme(true);
+        });
+    }
 
     // Escuchar cambios del sistema
     const colorSchemeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    colorSchemeMediaQuery.addEventListener('change', (e) => {
-        if (!localStorage.getItem(config.storageKey)) {
+    const handleSystemThemeChange = (e) => {
+        if (!localStorage.getItem(config.storageKey) && !document.querySelector('meta[name="color-theme"]')) {
             if (e.matches) {
                 enableDarkMode(false);
             } else {
                 enableLightMode(false);
             }
         }
-    });
+    };
+    
+    colorSchemeMediaQuery.addEventListener('change', handleSystemThemeChange);
 
     // Inicializar
     applySavedTheme();
-
-    // Limpieza para SPA (opcional)
-    return () => {
-        darkModeToggle.removeEventListener('click', toggleTheme);
-        darkModeSwitch.removeEventListener('change', toggleTheme);
-        colorSchemeMediaQuery.removeEventListener('change', handleSystemThemeChange);
-    };
-});     
+});

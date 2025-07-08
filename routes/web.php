@@ -98,6 +98,7 @@ Route::middleware(['auth', EnsureUserHasSettings::class])->group(function () {
             ->name('monthly.summary');
     });
 });
+    
 
 
 // === Rutas de Fallback ===
