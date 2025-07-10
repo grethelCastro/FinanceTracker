@@ -1,7 +1,39 @@
 /* =============================================
    VARIABLES GLOBALES Y CONFIGURACIÓN BASE
    ============================================= */
+/*grafico de gastos*/
+/* Contenedor principal de gráficos */
+.chart-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    pointer-events: none;
+}
 
+/* Canvas de Chart.js */
+.chart-container canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+    pointer-events: auto; /* Permite interacción con tooltips */
+}
+
+
+@media (max-width: 768px) {
+    .card-body--fixed-chart {
+        height: 300px; /* Altura menor en móviles */
+    }
+    
+    .chart-container {
+        min-height: 280px; /* Evita que se hagan muy pequeños */
+    }
+}
 :root {
   /* --- Variables de modo claro --- */
   --sidebar-bg-light: #f8f9fa;

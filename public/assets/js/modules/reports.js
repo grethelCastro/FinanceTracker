@@ -1,137 +1,285 @@
-import financeStorage from '../core/storage.js';
-
 document.addEventListener('DOMContentLoaded', function() {
-    // Solo ejecutar si estamos en la página de reportes
-    if (!document.getElementById('categoryChart')) return;
-    
-    // Obtener datos del almacenamiento
-    const transactions = financeStorage.getTransactions();
-    const categories = financeStorage.getCategories();
-    
-    // Generar reporte mensual
-    generateMonthlyReport(transactions);
-    
-    // Generar gráfico de categorías
-    generateCategoryChart(transactions, categories);
-    
-    // Función para generar el reporte mensual
-    function generateMonthlyReport(transactions) {
-        const monthlySummary = document.getElementById('monthlySummary');
-        if (!monthlySummary) return;
-        
-        // Agrupar transacciones por mes
-        const monthlyData = {};
-        
-        transactions.forEach(transaction => {
-            const date = new Date(transaction.date);
-            const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-            
-            if (!monthlyData[monthYear]) {
-                monthlyData[monthYear] = {
-                    income: 0,
-                    expense: 0,
-                    months: date.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })
-                };
-            }
-            
-            if (transaction.type === 'income') {
-                monthlyData[monthYear].income += transaction.amount;
-            } else {
-                monthlyData[monthYear].expense += transaction.amount;
-            }
-        });
-        
-        // Ordenar por fecha (más reciente primero)
-        const sortedMonths = Object.keys(monthlyData).sort().reverse();
-        
-        // Generar HTML del reporte
-        let html = '<div class="table-responsive"><table class="table table-sm">';
-        html += '<thead><tr><th>Mes</th><th class="text-end">Ingresos</th><th class="text-end">Gastos</th><th class="text-end">Balance</th></tr></thead><tbody>';
-        
-        sortedMonths.forEach(month => {
-            const data = monthlyData[month];
-            const balance = data.income - data.expense;
-            
-            html += `
-                <tr>
-                    <td>${data.months}</td>
-                    <td class="text-end text-success">C$ ${data.income.toFixed(2)}</td>
-                    <td class="text-end text-danger">C$ ${data.expense.toFixed(2)}</td>
-                    <td class="text-end fw-bold ${balance >= 0 ? 'text-success' : 'text-danger'}">C$ ${balance.toFixed(2)}</td>
-                </tr>
-            `;
-        });
-        
-        html += '</tbody></table></div>';
-        monthlySummary.innerHTML = html;
+    // Configuración inicial de gráficos
+    const charts = {
+        monthlySummary: null,
+        expense: null,
+        category: null
+    };
+
+    // Inicializar todos los gráficos
+    function initCharts() {
+        initMonthlySummaryChart();
+        initExpenseChart();
+        initCategoryChart();
+        setupEventListeners();
     }
-    
-    // Función para generar el gráfico de categorías
-    function generateCategoryChart(transactions, categories) {
-        const ctx = document.getElementById('categoryChart').getContext('2d');
-        
-        // Agrupar gastos por categoría
-        const expenseCategories = categories.filter(c => c.type === 'expense');
-        const categoryData = {};
-        
-        expenseCategories.forEach(category => {
-            categoryData[category.name] = 0;
-        });
-        
-        transactions.forEach(transaction => {
-            if (transaction.type === 'expense') {
-                const category = categories.find(c => c.id === transaction.categoryId);
-                if (category) {
-                    categoryData[category.name] += transaction.amount;
-                }
-            }
-        });
-        
-        // Filtrar categorías sin gastos
-        const labels = [];
-        const data = [];
-        const backgroundColors = [
-            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
-            '#FF9F40', '#8AC24A', '#607D8B', '#E91E63', '#9C27B0'
-        ];
-        
-        Object.entries(categoryData).forEach(([category, amount], index) => {
-            if (amount > 0) {
-                labels.push(category);
-                data.push(amount);
-            }
-        });
-        
-        // Crear el gráfico
-        new Chart(ctx, {
-            type: 'doughnut',
+
+    // 1. Gráfico de Resumen Mensual
+    function initMonthlySummaryChart() {
+        const ctx = document.getElementById('monthlySummaryChart');
+        if (!ctx) return;
+
+        charts.monthlySummary = new Chart(ctx, {
+            type: 'bar',
             data: {
-                labels: labels,
+                labels: window.monthlyLabels || [],
+                datasets: [
+                    {
+                        label: 'Ingresos',
+                        data: window.monthlyIncome || [],
+                        backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Gastos',
+                        data: window.monthlyExpenses || [],
+                        backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: getChartOptions('monthly')
+        });
+    }
+
+    // 2. Gráfico de Distribución de Gastos (Pie)
+    function initExpenseChart() {
+        const ctx = document.getElementById('expenseChart');
+        if (!ctx || !window.expenseChartData) return;
+
+        charts.expense = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: window.expenseChartData.labels || [],
                 datasets: [{
-                    data: data,
-                    backgroundColor: backgroundColors.slice(0, labels.length),
+                    data: window.expenseChartData.data || [],
+                    backgroundColor: window.expenseChartData.colors || [],
                     borderWidth: 1
                 }]
             },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'right',
+            options: getChartOptions('pie')
+        });
+    }
+
+
+    // 3. Gráfico de Ingresos y Gastos por Categoría
+// 3. Gráfico de Ingresos y Gastos por Categoría
+function initCategoryChart() {
+    const ctx = document.getElementById('categoryChart');
+    if (!ctx || !window.categoryChartData) return;
+
+    // Verificar datos recibidos
+    console.log('Datos de ingresos:', window.categoryChartData.income);
+    console.log('Datos de gastos:', window.categoryChartData.expenses);
+
+    // Crear datasets separados con sus propias etiquetas
+    const incomeDataset = {
+        label: 'Ingresos',
+        data: window.categoryChartData.income.data,
+        backgroundColor: window.categoryChartData.income.colors,
+        borderColor: window.categoryChartData.income.colors.map(c => c.replace('0.7', '1')),
+        borderWidth: 1,
+        // Asignar las etiquetas específicas para ingresos
+        labels: window.categoryChartData.income.labels
+    };
+
+    const expenseDataset = {
+        label: 'Gastos',
+        data: window.categoryChartData.expenses.data.map(amount => -Math.abs(amount)),
+        backgroundColor: window.categoryChartData.expenses.colors,
+        borderColor: window.categoryChartData.expenses.colors.map(c => c.replace('0.7', '1')),
+        borderWidth: 1,
+        // Asignar las etiquetas específicas para gastos
+        labels: window.categoryChartData.expenses.labels
+    };
+
+    // Configuración del gráfico
+    charts.category = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            // Usar etiquetas vacías ya que manejaremos las etiquetas en el tooltip
+            labels: Array(incomeDataset.data.length + expenseDataset.data.length).fill(''),
+            datasets: [incomeDataset, expenseDataset]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const value = Math.abs(context.raw);
+                            return `${context.dataset.label}: C$ ${value.toLocaleString()}`;
+                        },
+                        afterLabel: function(context) {
+                            // Mostrar la etiqueta correcta según el dataset
+                            return context.dataset.labels[context.dataIndex];
+                        }
+                    }
+                },
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        boxWidth: 12,
+                        padding: 20,
+                        usePointStyle: true
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    stacked: false,
+                    ticks: {
+                        callback: function(value) {
+                            return 'C$ ' + Math.abs(value).toLocaleString();
+                        }
+                    }
+                },
+                y: {
+                    stacked: false,
+                    grid: {
+                        display: false
                     },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                const label = context.label || '';
-                                const value = context.raw || 0;
-                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                const percentage = Math.round((value / total) * 100);
-                                return `${label}: C$ ${value.toFixed(2)} (${percentage}%)`;
-                            }
+                    // Ocultar las etiquetas del eje Y ya que las mostramos en el tooltip
+                    ticks: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+}
+    // Función para obtener opciones de gráficos
+    function getChartOptions(type) {
+        const commonOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.dataset.label || context.label || '';
+                            const value = context.raw || 0;
+                            return `${label}: C$ ${value.toLocaleString()}`;
                         }
                     }
                 }
             }
+        };
+
+        switch (type) {
+            case 'monthly':
+                return {
+                    ...commonOptions,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: value => 'C$ ' + value.toLocaleString()
+                            }
+                        }
+                    }
+                };
+            case 'pie':
+                return {
+                    ...commonOptions,
+                    plugins: {
+                        ...commonOptions.plugins,
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                boxWidth: 12,
+                                padding: 10
+                            }
+                        }
+                    }
+                };
+            case 'bar':
+                return {
+                    ...commonOptions,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: value => 'C$ ' + value.toLocaleString()
+                            }
+                        }
+                    }
+                };
+            default:
+                return commonOptions;
+        }
+    }
+
+    // Configurar event listeners
+function setupEventListeners() {
+    // Selector de mes para Distribución de Gastos
+    const expenseFilter = document.getElementById('expenseMonthFilter');
+    if (expenseFilter) {
+        expenseFilter.addEventListener('change', function() {
+            updateFilter('expense', this.value);
         });
     }
+
+    // Selector de mes para Gastos por Categoría
+    const categoryFilter = document.getElementById('categoryMonthFilter');
+    if (categoryFilter) {
+        categoryFilter.addEventListener('change', function() {
+            updateFilter('category', this.value);
+        });
+    }
+}
+
+    // Actualizar filtros y recargar la página
+function updateFilter(filterType, value = null) {
+    const url = new URL(window.location.href);
+    
+    // Preservar los parámetros existentes del otro filtro
+    const currentExpenseMonth = filterType === 'expense' ? value : url.searchParams.get('expense_month');
+    const currentCategoryMonth = filterType === 'category' ? value : url.searchParams.get('category_month');
+    
+    // Limpiar todos los parámetros primero
+    ['expense_month', 'category_month', 'expense_filter', 'category_filter'].forEach(param => {
+        url.searchParams.delete(param);
+    });
+
+    // Establecer los parámetros correctamente
+    if (filterType === 'expense') {
+        url.searchParams.set('expense_month', value);
+        url.searchParams.set('expense_filter', 'month');
+        // Mantener el filtro de categoría si existe
+        if (url.searchParams.get('category_month')) {
+            url.searchParams.set('category_month', currentCategoryMonth);
+            url.searchParams.set('category_filter', 'month');
+        }
+    } else if (filterType === 'category') {
+        url.searchParams.set('category_month', value);
+        url.searchParams.set('category_filter', 'month');
+        // Mantener el filtro de gastos si existe
+        if (url.searchParams.get('expense_month')) {
+            url.searchParams.set('expense_month', currentExpenseMonth);
+            url.searchParams.set('expense_filter', 'month');
+        }
+    }
+
+    // Agregar parámetros de filtro para el otro gráfico si existen
+    if (currentExpenseMonth && filterType !== 'expense') {
+        url.searchParams.set('expense_month', currentExpenseMonth);
+        url.searchParams.set('expense_filter', 'month');
+    }
+    
+    if (currentCategoryMonth && filterType !== 'category') {
+        url.searchParams.set('category_month', currentCategoryMonth);
+        url.searchParams.set('category_filter', 'month');
+    }
+
+    window.location.href = url.toString();
+}
+
+    // Inicializar la aplicación
+    initCharts();
 });

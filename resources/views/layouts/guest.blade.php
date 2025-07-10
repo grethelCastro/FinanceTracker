@@ -12,7 +12,7 @@
 
     <!-- CSS Personalizado -->
     <link rel="stylesheet" href="{{ asset('assets/css/variables.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/transitions.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/loader.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/utilities.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/form.css') }}">
     
@@ -20,7 +20,7 @@
 </head>
 <body class="bg-light d-flex align-items-center justify-content-center min-vh-100">
     <!-- Incluir el componente de transiciones -->
-    @include('components.transitions')
+    @include('components.loader')
 
     <div class="container-fluid px-3">
         <div class="row justify-content-center align-items-center min-vh-100">
@@ -33,7 +33,7 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ asset('assets/modules/darkMode.js   ') }}"></script>
-    <script src="{{ asset('assets/js/core/pageTransitions.js') }}"></script>
+    <script src="{{ asset('assets/js/core/loader.js') }}"></script>
     
     @yield('scripts')
 </body>
