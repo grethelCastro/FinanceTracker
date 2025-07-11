@@ -56,4 +56,5 @@ class User extends Authenticatable
     {
         return !is_null($this->currency) && !is_null($this->date_format);
     }
+    
 }

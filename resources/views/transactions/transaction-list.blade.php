@@ -95,56 +95,77 @@
                     </thead>
                     <tbody>
                         @foreach($transactions as $transaction)
-    <tr>
-        <td>{{ $transaction->date->format('d/m/Y') }}</td>
-        <td>
-            @if($transaction->description)
-                <span data-bs-toggle="tooltip" title="{{ $transaction->description }}">
-                    {{ Str::limit($transaction->description, 25) }}
-                </span>
-            @else
-                <span class="text-muted">Sin descripción</span>
-            @endif
-        </td>
-        <td>
-            <span class="badge bg-{{ $transaction->category->type === 'income' ? 'success' : 'danger' }}-subtle text-{{ $transaction->category->type === 'income' ? 'success' : 'danger' }}">
-                {{ $transaction->category->name }}
-            </span>
-        </td>
-        <td>{{ $transaction->account->name }}</td>
-        <td class="text-end fw-bold {{ $transaction->category->type === 'income' ? 'text-success' : 'text-danger' }}">
-            {{ $transaction->category->type === 'income' ? '+' : '-' }} 
-            {{ number_format($transaction->amount, 2) }} {{ auth()->user()->currency ?? 'NIO' }}
-        </td>
-        <td class="text-center">
-            <div class="btn-group btn-group-sm">
-                <a href="{{ route('transacciones.edit', $transaction) }}" 
-                   class="btn btn-outline-primary"
-                   data-bs-toggle="tooltip"
-                   title="Editar">
-                    <i class="bi bi-pencil"></i>
-                </a>
-                <form action="{{ route('transacciones.destroy', $transaction) }}" method="POST">
-                    @csrf @method('DELETE')
-                    <button type="submit" 
-                            class="btn btn-outline-danger"
-                            data-bs-toggle="tooltip"
-                            title="Eliminar"
-                            onclick="return confirm('¿Eliminar esta transacción?')">
-                        <i class="bi bi-trash"></i>
-                    </button>
-                </form>
-            </div>
-        </td>
-    </tr>
-@endforeach
+                            <tr>
+                                <td>{{ $transaction->date->format('d/m/Y') }}</td>
+                                <td>
+                                    @if($transaction->description)
+                                        <span data-bs-toggle="tooltip" title="{{ $transaction->description }}">
+                                            {{ Str::limit($transaction->description, 25) }}
+                                        </span>
+                                    @else
+                                        <span class="text-muted">Sin descripción</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <span class="badge bg-{{ $transaction->category->type === 'income' ? 'success' : 'danger' }}-subtle text-{{ $transaction->category->type === 'income' ? 'success' : 'danger' }}">
+                                        {{ $transaction->category->name }}
+                                    </span>
+                                </td>
+                                <td>{{ $transaction->account->name }}</td>
+                                <td class="text-end fw-bold {{ $transaction->category->type === 'income' ? 'text-success' : 'text-danger' }}">
+                                    {{ $transaction->category->type === 'income' ? '+' : '-' }} 
+                                    {{ number_format($transaction->amount, 2) }} {{ auth()->user()->currency ?? 'NIO' }}
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="{{ route('transacciones.edit', $transaction) }}" 
+                                           class="btn btn-outline-primary"
+                                           data-bs-toggle="tooltip"
+                                           title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <form action="{{ route('transacciones.destroy', $transaction) }}" method="POST">
+                                            @csrf @method('DELETE')
+                                            <button type="submit" 
+                                                    class="btn btn-outline-danger"
+                                                    data-bs-toggle="tooltip"
+                                                    title="Eliminar"
+                                                    onclick="return confirm('¿Eliminar esta transacción?')">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
                     </tbody>
                 </table>
             </div>
             
             <div class="mt-3 d-flex justify-content-center">
-                {{ $transactions->appends(request()->query())->links() }}
+                {{ $transactions->appends(request()->query())->links('pagination::bootstrap-4') }}
             </div>
+            
+            @section('styles')
+            <style>
+                /* Estilos compactos para paginación */
+                .pagination {
+                    --bs-pagination-padding-x: 0.5rem;
+                    --bs-pagination-padding-y: 0.25rem;
+                    --bs-pagination-font-size: 0.875rem;
+                    --bs-pagination-color: var(--bs-secondary);
+                    --bs-pagination-hover-color: var(--bs-secondary);
+                    --bs-pagination-focus-color: var(--bs-secondary);
+                    --bs-pagination-active-bg: var(--bs-secondary);
+                    --bs-pagination-active-border-color: var(--bs-secondary);
+                }
+                
+                .page-link {
+                    border-radius: 0.25rem;
+                    margin: 0 0.15rem;
+                }
+            </style>
+            @endsection
         @endif
     </div>
 </div>
