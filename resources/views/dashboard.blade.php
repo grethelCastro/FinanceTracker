@@ -40,22 +40,12 @@
         </div>
         
         <div class="row mt-4">
-            <div class="col-md-8">
-                @include('components.reports.monthly-summary', ['monthlySummary' => $monthlySummary])
-            </div>
-            <div class="col-md-4">
-                @include('components.reports.expense-chart', ['monthlySummary' => $monthlySummary])
-            </div>
-        </div>
-        
-        <div class="row mt-4">
             <div class="col-12">
                 @include('components.dashboard.recent-transactions', ['transactions' => $recentTransactions])
             </div>
         </div>
-    </div> <br><br> <br>
+    </div> <br>
     <br>
-    <br>
-    <br>
+
 
 @endsection
