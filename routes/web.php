@@ -40,23 +40,21 @@ Route::middleware(['auth', EnsureUserHasSettings::class])->group(function () {
     // Dashboard
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Transactions
-    Route::resource('transacciones', TransactionsController::class)
-        ->except(['show'])
-        ->names([
-            'index' => 'transacciones.index',
-            'create' => 'transacciones.create',
-            'store' => 'transacciones.store',
-            'edit' => 'transacciones.edit',
-            'update' => 'transacciones.update',
-            'destroy' => 'transacciones.destroy'
-        ]);
+    // Transactions - RUTAS COMPLETAS Y CORREGIDAS
+    Route::prefix('transacciones')->group(function () {
+        Route::get('/', [TransactionsController::class, 'index'])->name('transacciones.index');
+        Route::get('/create', [TransactionsController::class, 'create'])->name('transacciones.create');
+        Route::post('/', [TransactionsController::class, 'store'])->name('transacciones.store');
+        Route::get('/{transaction}', [TransactionsController::class, 'show'])->name('transacciones.show');
+        Route::get('/{transaction}/edit', [TransactionsController::class, 'edit'])->name('transacciones.edit');
+        Route::put('/{transaction}', [TransactionsController::class, 'update'])->name('transacciones.update');
+        Route::delete('/{transaction}', [TransactionsController::class, 'destroy'])->name('transacciones.destroy');
+    });
 
     // Reports
     Route::get('/reportes', [ReportsController::class, 'index'])->name('reportes.index');
 
     // Profile
-// Dentro del grupo de rutas protegidas
     Route::prefix('perfil')->group(function () {
         Route::get('/', [ProfileController::class, 'profile'])->name('perfil');
         Route::put('/', [ProfileController::class, 'updateProfile'])->name('perfil.update');
@@ -98,8 +96,6 @@ Route::middleware(['auth', EnsureUserHasSettings::class])->group(function () {
             ->name('monthly.summary');
     });
 });
-    
-
 
 // === Rutas de Fallback ===
 Route::fallback(function () {

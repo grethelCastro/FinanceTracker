@@ -16,31 +16,35 @@ class TransactionsController extends Controller
     public function index(Request $request)
     {
         try {
-    $user = $request->user();
-    
-    $query = Transaction::with([
-            'category' => function($q) use ($user) {
-                $q->where('user_id', $user->id);
-            },
-            'account' => function($q) use ($user) {
-                $q->where('user_id', $user->id);
-            }
-        ])
-        ->where('user_id', $user->id)
-        ->latest();
-            // Aplicar filtros
-            if ($request->filled('type') && in_array($request->type, ['income', 'expense'])) {
-                $query->whereHas('category', fn($q) => $q->where('type', $request->type));
+            $user = $request->user();
+            
+            $query = Transaction::with([
+                    'category' => function($q) use ($user) {
+                        $q->where('user_id', $user->id);
+                    },
+                    'account' => function($q) use ($user) {
+                        $q->where('user_id', $user->id);
+                    }
+                ])
+                ->where('user_id', $user->id)
+                ->latest();
+
+            // Filtro por tipo (income/expense)
+            if ($request->filled('transaction_type') && in_array($request->transaction_type, ['income', 'expense'])) {
+                $query->whereHas('category', fn($q) => $q->where('type', $request->transaction_type));
             }
 
-            if ($request->filled('account_id')) {
-                $query->where('account_id', $request->account_id);
+            // Filtro por día específico
+            if ($request->filled('day')) {
+                $query->whereDay('date', $request->day);
             }
 
-            if ($request->filled('category_id')) {
-                $query->where('category_id', $request->category_id);
+            // Filtro por mes específico
+            if ($request->filled('month')) {
+                $query->whereMonth('date', $request->month);
             }
 
+            // Filtro por rango de fechas
             if ($request->filled('start_date') && $request->filled('end_date')) {
                 $query->whereBetween('date', [$request->start_date, $request->end_date]);
             }
@@ -116,28 +120,44 @@ class TransactionsController extends Controller
         }
     }
 
-    public function edit(Request $request, Transaction $transaction)
-    {
-        try {
-            if ($request->user()->id !== $transaction->user_id) {
-                abort(403, 'No tienes permiso para editar esta transacción');
-            }
-            
-            return view('transactions.create', [
-                'transaction' => $transaction,
-                'categories' => Category::where('user_id', $request->user()->id)->get(),
-                'accounts' => Account::where('user_id', $request->user()->id)->get(),
-                'editMode' => true
-            ]);
-        } catch (\Exception $e) {
-            Log::error('Error en TransactionsController@edit: ' . $e->getMessage());
-            return back()->with('error', 'Error al cargar transacción para editar');
-        }
-    }
+public function edit(Request $request, Transaction $transaction)
+{
+    try {
+        \Log::info('Edit method called', [
+            'transaction_id' => $transaction->id,
+            'user_id' => $request->user()->id,
+            'transaction_user_id' => $transaction->user_id
+        ]);
 
+        // Verificar que la transacción pertenezca al usuario autenticado
+        if ($request->user()->id !== $transaction->user_id) {
+            \Log::warning('Unauthorized edit attempt', [
+                'user_id' => $request->user()->id,
+                'transaction_user_id' => $transaction->user_id
+            ]);
+            abort(403, 'No tienes permiso para editar esta transacción');
+        }
+        
+        \Log::info('Loading edit view', [
+            'view_path' => 'transactions.edit',
+            'transaction_id' => $transaction->id
+        ]);
+
+        return view('transactions.edit', [
+            'transaction' => $transaction,
+            'categories' => Category::where('user_id', $request->user()->id)->get(),
+            'accounts' => Account::where('user_id', $request->user()->id)->get()
+        ]);
+
+    } catch (\Exception $e) {
+        \Log::error('Error en TransactionsController@edit: ' . $e->getMessage());
+        return back()->with('error', 'Error al cargar transacción para editar');
+    }
+}
     public function update(Request $request, Transaction $transaction)
     {
         try {
+            // Verificar que la transacción pertenezca al usuario autenticado
             if ($request->user()->id !== $transaction->user_id) {
                 abort(403, 'No tienes permiso para actualizar esta transacción');
             }
@@ -194,28 +214,56 @@ class TransactionsController extends Controller
         }
     }
 
-    public function destroy(Request $request, Transaction $transaction)
+    public function destroy(Request $request, $id)
     {
         try {
+            $transaction = Transaction::findOrFail($id);
+            
+            // Verificar que la transacción pertenezca al usuario autenticado
             if ($request->user()->id !== $transaction->user_id) {
-                abort(403, 'No tienes permiso para eliminar esta transacción');
+                return back()->with('error', 'No tienes permiso para eliminar esta transacción');
             }
 
-            return DB::transaction(function () use ($transaction) {
+            DB::transaction(function () use ($transaction) {
                 $account = $transaction->account;
-                $account->balance -= $transaction->type === 'income' 
-                    ? $transaction->amount 
-                    : -$transaction->amount;
-                $account->save();
+                
+                // Revertir el efecto de la transacción en el balance de la cuenta
+                if ($account) {
+                    if ($transaction->type === 'income') {
+                        // Si era un ingreso, restamos el monto del balance
+                        $account->balance -= $transaction->amount;
+                    } else {
+                        // Si era un gasto, sumamos el monto al balance
+                        $account->balance += $transaction->amount;
+                    }
+                    $account->save();
+                }
 
                 $transaction->delete();
-
-                return back()->with('success', 'Transacción eliminada correctamente');
             });
+
+            return back()->with('success', 'Transacción eliminada correctamente');
 
         } catch (\Exception $e) {
             Log::error('Error en TransactionsController@destroy: ' . $e->getMessage());
-            return back()->with('error', 'Error al eliminar transacción');
+            return back()->with('error', 'Error al eliminar transacción: ' . $e->getMessage());
         }
     }
+    public function show(Request $request, $id)
+{
+    try {
+        $user = $request->user();
+        
+        $transaction = Transaction::with(['category', 'account'])
+            ->where('user_id', $user->id)
+            ->where('id', $id)
+            ->firstOrFail();
+
+        return view('transactions.show', compact('transaction'));
+
+    } catch (\Exception $e) {
+        Log::error('Error en TransactionsController@show: ' . $e->getMessage());
+        return back()->with('error', 'Transacción no encontrada');
+    }
+}
 }

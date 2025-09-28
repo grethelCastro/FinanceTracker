@@ -77,10 +77,7 @@
                         <canvas id="categoryChart"></canvas>
                     </div>
                     <!-- Leyenda -->
-                    <div class="mt-3 text-center">
-                        <span class="badge bg-primary me-2">Ingresos</span>
-                        <span class="badge bg-danger">Gastos</span>
-                    </div>
+
                 @endif
             </div>
         </div>
